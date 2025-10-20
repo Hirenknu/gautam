@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Diwali — Greeting</title>
+  <style>
+    :root{
+      --bg1: #0b1020;
+      --bg2: #2b0b2d;
+      --accent: #ffb703;
+      --accent2: #ff6b6b;
+      --card: rgba(255,255,255,0.06);
+      --glass: rgba(255,255,255,0.06);
+    }
+    html,body{height:100%;margin:0;font-family: "Segoe UI", Roboto, system-ui, -apple-system, "Helvetica Neue", Arial;}
+    body{
+      background: linear-gradient(160deg, var(--bg1) 0%, var(--bg2) 60%);
+      color:#fff;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:30px;
+    }
+
+    /* Central card */
+    .card{
+      width:960px;
+      max-width:96%;
+      min-height:520px;
+      border-radius:18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      box-shadow: 0 10px 45px rgba(0,0,0,0.6);
+      position:relative;
+      overflow:hidden;
+      padding:28px;
+      backdrop-filter: blur(6px) saturate(120%);
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:20px;
+    }
+
+    /* Left area: message */
+    .left{
+      padding:12px 18px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:12px;
+    }
+    h1{
+      margin:0;
+      font-size:48px;
+      line-height:1;
+      letter-spacing:0.6px;
+      text-shadow: 0 4px 22px rgba(255,147,73,0.12), 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .sub{
+      font-size:20px;
+      color: #ffd8a8;
+      margin-top:8px;
+    }
+    .family{
+      font-size:18px;
+      color:#ffe7c7;
+      margin-top:6px;
+      font-weight:600;
+    }
+    .from{
+      margin-top:18px;
+      font-size:16px;
+      color:#fff;
+      opacity:0.95;
+    }
+
+    /* Right area: controls + diya */
+    .right{
+      padding:12px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:stretch;
+    }
+    .card-panel{
+      background: rgba(255,255,255,0.02);
+      border-radius:12px;
+      padding:12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    label{font-size:13px;color:#ddd;display:block;margin-bottom:6px}
+    input[type="text"]{
+      width:100%;
+      padding:10px 12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.06);
+      background: rgba(0,0,0,0.15);
+      color:#fff;
+      outline:none;
+      font-size:15px;
+    }
+    button{
+      padding:10px 14px;
+      border-radius:10px;
+      border:0;
+      cursor:pointer;
+      font-weight:700;
+      letter-spacing:0.4px;
+      background: linear-gradient(90deg,var(--accent) 0%, var(--accent2) 100%);
+      color:#1a1a1a;
+      box-shadow: 0 6px 18px rgba(255,107,107,0.12);
+    }
+
+    /* Diya container */
+    .diya-wrap{
+      height:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+    }
+    .diya{
+      width:120px;
+      height:80px;
+      transform-origin:center;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float{
+      0%{ transform: translateY(0) }
+      50%{ transform: translateY(-8px) }
+      100%{ transform: translateY(0) }
+    }
+
+    /* small footer text */
+    .small{font-size:12px;color:rgba(255,255,255,0.55);}
+
+    /* Fireworks canvas fills card */
+    canvas.fireworks{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    /* Confetti particles over right area */
+    .confetti{
+      position:absolute;
+      inset:auto 18px 18px auto;
+      width:180px;height:180px;
+      pointer-events:none;
+      z-index:2;
+    }
+
+    /* Responsive */
+    @media (max-width:880px){
+      .card{grid-template-columns:1fr;min-height:640px;}
+      .right{order:-1}
+      .diya{width:140px;height:90px}
+      h1{font-size:36px}
+    }
+  </style>
+</head>
+<body>
+  <div class="card" role="main" aria-label="Diwali greeting">
+    <canvas class="fireworks" id="fireworks"></canvas>
+
+    <div class="left" style="z-index:3">
+      <h1 id="title">Happy Diwali ✨</h1>
+      <div class="sub" id="greeting">Wishing brightness, joy & prosperity to all of you.</div>
+      <div class="family" id="familyLine">For Side to Savani family</div>
+      <div class="from small" id="fromLine">From: <strong id="senderName">Sathvara Hiren</strong></div>
+
+      <div style="margin-top:18px">
+        <p class="small">Tip: click the "Set Name" button on the right to personalize this card.</p>
+      </div>
+    </div>
+
+    <div class="right" style="z-index:3">
+      <div class="card-panel">
+        <label for="nameInput">Your name (will appear after "From:")</label>
+        <input id="nameInput" type="text" placeholder="e.g. Hiren Satvara" value="Hiren Satvara" />
+        <div style="height:10px"></div>
+        <button id="applyNameBtn">Set Name</button>
+      </div>
+
+      <div class="card-panel diya-wrap" aria-hidden="true">
+        <!-- SVG diya (simple stylized diya with flickering flame) -->
+        <svg class="diya" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diya">
+          <!-- bowl -->
+          <ellipse cx="120" cy="120" rx="85" ry="22" fill="#6b2b00" opacity="0.95"/>
+          <path d="M30 120 C70 70,170 70,210 120 C170 150,70 150,30 120 Z" fill="#8a3b0a"/>
+
+          <!-- inner glow -->
+          <ellipse cx="120" cy="111" rx="55" ry="12" fill="rgba(255,200,120,0.08)"/>
+
+          <!-- flame group -->
+          <g id="flame">
+            <path d="M120 38 C132 52,132 80,120 96 C108 80,108 52,120 38 Z" fill="#ffd56b"/>
+            <path d="M120 50 C128 60,128 76,120 88 C112 76,112 60,120 50 Z" fill="#ff8a00"/>
+            <!-- tiny inner core -->
+            <path d="M120 56 C125 64,125 72,120 80 C115 72,115 64,120 56 Z" fill="#fff6d6" opacity="0.95"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="card-panel">
+        <label>Customize message</label>
+        <input id="messageInput" type="text" placeholder="e.g. Prosperous Diwali to everyone!" value="Wishing brightness, joy & prosperity to all of you."/>
+        <div style="height:10px"></div>
+        <button id="applyMsgBtn">Set Message</button>
+      </div>
+    </div>
+
+    <!-- decorative confetti area (canvas-like) -->
+    <canvas class="confetti" id="confettiCanvas" width="180" height="180" aria-hidden="true"></canvas>
+  </div>
+
+  <script>
+    // --- Personalization logic ---
+    const nameInput = document.getElementById('nameInput');
+    const applyNameBtn = document.getElementById('applyNameBtn');
+    const senderNameEl = document.getElementById('senderName');
+    const messageInput = document.getElementById('messageInput');
+    const applyMsgBtn = document.getElementById('applyMsgBtn');
+    const greetingEl = document.getElementById('greeting');
+
+    applyNameBtn.addEventListener('click', ()=> {
+      const v = nameInput.value.trim() || 'Your Name';
+      senderNameEl.textContent = v;
+      // fun animation
+      applyNameBtn.textContent = 'Saved ✓';
+      setTimeout(()=> applyNameBtn.textContent = 'Set Name', 1300);
+    });
+
+    applyMsgBtn.addEventListener('click', ()=> {
+      greetingEl.textContent = messageInput.value || 'Wishing brightness, joy & prosperity to all of you.';
+      applyMsgBtn.textContent = 'Saved ✓';
+      setTimeout(()=> applyMsgBtn.textContent = 'Set Message', 1300);
+    });
+
+    // Allow Enter key to set
+    nameInput.addEventListener('keydown', (e)=> { if(e.key==='Enter') applyNameBtn.click(); });
+    messageInput.addEventListener('keydown', (e)=> { if(e.key==='Enter') applyMsgBtn.click(); });
+
+    // --- Confetti (small) ---
+    (function(){
+      const canvas = document.getElementById('confettiCanvas');
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+      const pieces = [];
+      for(let i=0;i<18;i++){
+        pieces.push({
+          x: Math.random()*W,
+          y: Math.random()*H,
+          w: 6 + Math.random()*8,
+          h: 4 + Math.random()*6,
+          r: Math.random()*360,
+          s: 0.6 + Math.random()*0.8,
+          dy: 0.4 + Math.random()*1.2,
+          color: ['#FFD166','#EF476F','#06D6A0','#118AB2'][Math.floor(Math.random()*4)]
+        });
+      }
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        pieces.forEach(p=>{
+          p.y += p.dy;
+          p.r += p.s * 2;
+          if(p.y > H + 20){ p.y = -10; p.x = Math.random()*W; }
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.r * Math.PI / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+          ctx.restore();
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // --- Fireworks canvas (left-big) ---
+    (function(){
+      const canvas = document.getElementById('fireworks');
+      const ctx = canvas.getContext('2d');
+
+      function resize(){
+        canvas.width = canvas.clientWidth * devicePixelRatio;
+        canvas.height = canvas.clientHeight * devicePixelRatio;
+        ctx.scale(devicePixelRatio, devicePixelRatio);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // particles and rockets
+      const rockets = [];
+      const particles = [];
+
+      class Rocket {
+        constructor(x,y,vx,vy,color){
+          this.x=x;this.y=y;this.vx=vx;this.vy=vy;this.color=color;this.life=0;this.explodeAt = 0.2 + Math.random()*0.45;
+        }
+        step(dt){
+          this.vy += 40 * dt; // gravity
+          this.x += this.vx * dt * 60;
+          this.y += this.vy * dt * 60;
+          this.life += dt;
+          if(this.vy > -10 || this.life > this.explodeAt){
+            this.explode();
+            return false;
+          }
+          return true;
+        }
+        explode(){
+          const count = 18 + Math.floor(Math.random()*30);
+          for(let i=0;i<count;i++){
+            const a = Math.random()*Math.PI*2;
+            const s = 30 + Math.random()*120;
+            const vx = Math.cos(a)*s;
+            const vy = Math.sin(a)*s;
+            particles.push(new Particle(this.x,this.y,vx,vy,this.color));
+          }
+        }
+      }
+
+      class Particle {
+        constructor(x,y,vx,vy,color){
+          this.x=x;this.y=y;this.vx=vx;this.vy=vy;this.color=color;this.life=0;this.ttl=0.9 + Math.random()*1.2;
+        }
+        step(dt){
+          this.vy += 50 * dt;
+          this.vx *= 0.995;
+          this.vy *= 0.995;
+          this.x += this.vx * dt * 0.6;
+          this.y += this.vy * dt * 0.6;
+          this.life += dt;
+          return this.life < this.ttl;
+        }
+        draw(ctx){
+          const t = this.life / this.ttl;
+          ctx.globalAlpha = Math.max(0, 1 - t);
+          ctx.beginPath();
+          ctx.fillStyle = this.color;
+          ctx.arc(this.x, this.y, Math.max(0.8, 3*(1-t)), 0, Math.PI*2);
+          ctx.fill();
+          ctx.globalAlpha = 1;
+        }
+      }
+
+      // emit rockets periodically
+      let lastTime = performance.now()/1000;
+      function loop(nowRaw){
+        const now = nowRaw/1000;
+        const dt = Math.min(0.04, now - lastTime);
+        lastTime = now;
+
+        // occasionally shoot a rocket
+        if(Math.random() < 0.04) {
+          const x = 80 + Math.random()*(canvas.clientWidth - 160);
+          const y = canvas.clientHeight + 10;
+          const vx = (Math.random()-0.5)*30;
+          const vy = -120 - Math.random()*60;
+          const colors = ['#FFDD55','#FF6B6B','#9B5DE5','#06D6A0','#FFD166','#118AB2'];
+          rockets.push(new Rocket(x,y,vx,vy,colors[Math.floor(Math.random()*colors.length)]));
+        }
+
+        // step rockets
+        for(let i=rockets.length-1;i>=0;i--){
+          if(!rockets[i].step(dt)) rockets.splice(i,1);
+        }
+        // step particles
+        for(let i=particles.length-1;i>=0;i--){
+          if(!particles[i].step(dt)) particles.splice(i,1);
+        }
+
+        // draw
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.save();
+        ctx.scale(1,1);
+        ctx.translate(0,0);
+        // subtle background glow
+        // draw rockets as small points
+        rockets.forEach(r=>{
+          ctx.beginPath();
+          ctx.fillStyle = r.color;
+          ctx.arc(r.x, r.y, 3.5, 0, Math.PI*2);
+          ctx.fill();
+        });
+        particles.forEach(p=> p.draw(ctx) );
+        ctx.restore();
+
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    })();
+
+    // --- Small flame flicker to make it feel alive ---
+    (function(){
+      const flameGroup = document.getElementById('flame');
+      let t=0;
+      function flicker(){
+        t += 0.06 + Math.random()*0.06;
+        const s = 0.98 + Math.sin(t)*0.06 + Math.random()*0.02;
+        flameGroup.style.transform = scale(${s}) translateY(${Math.sin(t*1.5)*1.2}px);
+        requestAnimationFrame(flicker);
+      }
+      flicker();
+    })();
+
+    // Set initial default name as value from the input on load
+    document.getElementById('senderName').textContent = nameInput.value || 'Your Name';
+  </script>
+</body>
+</html>
